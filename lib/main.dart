@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+import 'auth/sign-in.dart';
+import 'auth/sign-up.dart';
 import 'main/main.dart';
 
 void main() => runApp(App());
@@ -13,6 +16,7 @@ class _AppState extends State<App> {
   bool _initialized = false;
   bool _error = false;
 
+  User _user;
 
   void initializeFlutterFire() async {
     try {
@@ -21,6 +25,11 @@ class _AppState extends State<App> {
         _initialized = true;
       });
 
+      FirebaseAuth.instance.authStateChanges().listen((User user) {
+        setState(() {
+          _user = user;
+        });
+      });
     } catch (e) {
       setState(() {
         _error = true;
@@ -48,7 +57,15 @@ class _AppState extends State<App> {
       title: 'Talipapa',
       initialRoute: '/',
       routes: {
-        '/': (context) => MainScreen(),
+        '/': (context) => MainScreen(
+              user: _user,
+            ),
+        'auth/sign-in': (context) => SignInScreen(
+              user: _user,
+            ),
+        'auth/sign-up': (context) => SignUpScreen(
+              user: _user,
+            ),
       },
     );
   }
