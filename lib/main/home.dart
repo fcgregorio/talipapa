@@ -2,6 +2,8 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:talipapa/main/detail.dart';
+import 'package:talipapa/model/product.dart';
 // import './home_compoments/appBar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var sampleImages = [
+  var listImg = [
     'img/a.jpg',
     'img/b.jpg',
     'img/c.jpg',
@@ -23,6 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
     'img/k.jpg',
     'img/l.jpg',
   ];
+  List<Product> sampleProducts = [];
+  // for(var p in listImg){
+
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,12 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 // mainAxisSpacing: 15,
 
                 children: [
-                  ...sampleImages.map((item) {
+                  ...listImg.map((item) {
                     String img = item;
                     return Container(
                       height: double.maxFinite,
                       child: Card(
-                        // margin: EdgeInsets.all(5),
                         elevation: 5,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,8 +65,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: double.maxFinite,
                               height: MediaQuery.of(context).size.height / 5.3,
                               decoration: BoxDecoration(
-                                // border: Border.all(color: Colors.grey),
-                                // borderRadius: BorderRadius.circular(20),
                                 image: DecorationImage(
                                   image: AssetImage(img),
                                   fit: BoxFit.cover,
@@ -70,11 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: FlatButton(
                                 child: Text(''),
                                 color: Colors.transparent,
-                                onPressed: () {}, //---------------------------
-
-                                // shape: RoundedRectangleBorder(
-                                //   borderRadius: BorderRadius.circular(20),
-                                // ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, 'detail');
+                                }, //---------------------------
                               ),
                             ),
                             Container(
