@@ -19,10 +19,22 @@ class ProfileScreen extends StatefulWidget {
 //           widget.onUserSignout();
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void _onUserSignOut() {
+    FirebaseAuth.instance.signOut();
+    widget.onUserSignout();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: RaisedButton(
+            child: Text('Log Out'),
+            onPressed: _onUserSignOut,
+          ),
+        ),
         Padding(
           padding: EdgeInsets.all(8),
           child: Card(

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import './background.dart';
 
 class SignUpScreen extends StatefulWidget {
   final User user;
@@ -27,64 +28,70 @@ class _SignUpState extends State<SignUpScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-        ),
-      ),
-      body: Center(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: 'Email address'),
-                  onSaved: (value) {
-                    _email = value;
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: 'Password'),
-                  onSaved: (value) {
-                    _password = value;
-                  },
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: RaisedButton(
-                    onPressed: _isSigningUp ? null : _signUp,
-                    child: Text('Sign up'),
+      // appBar: AppBar(
+      //   leading: Builder(
+      //     builder: (BuildContext context) {
+      //       return IconButton(
+      //         icon: const Icon(Icons.arrow_back),
+      //         onPressed: () {
+      //           Navigator.pop(context);
+      //         },
+      //       );
+      //     },
+      //   ),
+      // ),
+      body: Stack(
+        children: [
+          Background(),
+          Center(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Email address'),
+                      onSaved: (value) {
+                        _email = value;
+                      },
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: TextFormField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(), labelText: 'Password'),
+                      onSaved: (value) {
+                        _password = value;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: RaisedButton(
+                        onPressed: _isSigningUp ? null : _signUp,
+                        child: Text('Sign up'),
+                      ),
+                    ),
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('I already have an account'),
+                  ),
+                ],
               ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('I already have an account'),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

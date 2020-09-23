@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:talipapa/main/bookmarks.dart';
 import 'package:talipapa/main/home.dart';
 import 'package:talipapa/main/profile.dart';
+
+import 'message.dart';
 
 class MainScreen extends StatefulWidget {
   final User user;
@@ -18,7 +21,17 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
-    if (index == 1) {
+    if (index == 3) {
+      if (widget.user == null) {
+        Navigator.pushNamed(context, 'auth/sign-in');
+        return;
+      }
+    } else if (index == 2) {
+      if (widget.user == null) {
+        Navigator.pushNamed(context, 'auth/sign-in');
+        return;
+      }
+    } else if (index == 1) {
       if (widget.user == null) {
         Navigator.pushNamed(context, 'auth/sign-in');
         return;
@@ -39,6 +52,14 @@ class _MainScreenState extends State<MainScreen> {
             case 0:
               return HomeScreen();
             case 1:
+              return MessageScreen(
+                user: widget.user,
+              );
+            case 2:
+              return BookmarkScreen(
+                user: widget.user,
+              );
+            case 3:
               return ProfileScreen(
                 user: widget.user,
                 onUserSignout: () {
@@ -52,20 +73,31 @@ class _MainScreenState extends State<MainScreen> {
           }
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            title: Text('Profile'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
+      bottomNavigationBar: SafeArea(
+        child: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+              backgroundColor: Colors.black,
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.message),
+              title: Text('Messages'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bookmark),
+              title: Text('Bookmarks'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              title: Text('Profile'),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
