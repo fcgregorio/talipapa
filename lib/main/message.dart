@@ -19,6 +19,24 @@ class _MessageScreenState extends State<MessageScreen> {
       appBar: AppBar(
         title: Text('Messages'),
       ),
+      body: Container(
+        padding: EdgeInsets.fromLTRB(10, 15, 10, 20),
+        child: Column(
+          children: <Widget>[
+            //  map((item)
+            FlatButton(
+              onPressed: () => {Navigator.pushNamed(context, 'chatbox')},
+              color: Colors.orange,
+              padding: EdgeInsets.all(10.0),
+              child: Row(
+                // Replace with a Row for horizontal icon + text
+                children: <Widget>[Icon(Icons.image), Text("Name")],
+              ),
+              
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

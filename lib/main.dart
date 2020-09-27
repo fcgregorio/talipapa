@@ -5,6 +5,7 @@ import 'package:talipapa/main/bookmarks.dart';
 
 import 'auth/sign-in.dart';
 import 'auth/sign-up.dart';
+import 'main/chatbox.dart';
 import 'main/detail.dart';
 import 'main/main.dart';
 import 'main/message.dart';
@@ -90,6 +91,9 @@ class _AppState extends State<App> {
               user: _user,
             ),
         'detail': (context) => DetailScreen(),
+        'chatbox': (context) => ChatBox(
+          user: _user,
+        ),
       },
     );
   }
