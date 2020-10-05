@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:talipapa/model/product.dart';
+
 class DetailScreen extends StatefulWidget {
   static const routeName = '/DetailScreen';
   final User user;
@@ -13,8 +14,9 @@ class DetailScreen extends StatefulWidget {
   @override
   _DetailScreenState createState() => _DetailScreenState();
 }
+
 class _DetailScreenState extends State<DetailScreen> {
- Product args;
+  Product args;
   void addBookmark(BuildContext context) async {
     String productname = args.getProdName();
     String productprice = args.getProdPrice();
@@ -28,7 +30,7 @@ class _DetailScreenState extends State<DetailScreen> {
           "productname": productname,
           "productprice": productprice,
           "productowner": productowner,
-          "productdescription":productdescription,
+          "productdescription": productdescription,
           "productimage": productimage,
           "type": type
         }));
@@ -38,9 +40,10 @@ class _DetailScreenState extends State<DetailScreen> {
     Scaffold.of(context)
         .showSnackBar(SnackBar(content: Text("Bookmark Added!!")));
   }
+
   @override
   Widget build(BuildContext context) {
-     args = ModalRoute.of(context).settings.arguments;
+    args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffeba857),
@@ -106,54 +109,54 @@ class _DetailScreenState extends State<DetailScreen> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                 // ignore: unrelated_type_equality_checks
-                 widget.user.email != args.getProdOwner() ? 
-                args.getType() == '1' ? 
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: IconButton(
-                      onPressed: () {
-                        addBookmark(context);
-                      },
-                      icon: Icon(Icons.bookmark),
-                    ),
-                  )
-                  :Text(
-                    "HOTAOSDSADSADASD"
-                  ): Container(),
-                  
+                  // ignore: unrelated_type_equality_checks
+                  widget.user.email != args.getProdOwner()
+                      ? args.getType() == '1'
+                          ? Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: IconButton(
+                                onPressed: () {
+                                  addBookmark(context);
+                                },
+                                icon: Icon(Icons.bookmark),
+                              ),
+                            )
+                          : Container()
+                      : Container(),
                 ],
               ),
-              widget.user.email != args.getProdOwner() ? 
-              Container(
-                width: 250,
-                child: RaisedButton(
-                  color: Colors.orange,
-                  onPressed: () async {
-                    final doc = await FirebaseFirestore.instance.collection('chats').add({
-                      "bookmarkowner": widget.user.email,
-                      "productname": args.getProdName(),
-                      "productprice": args.getProdPrice(),
-                      "productowner": args.getProdOwner(),
-                      "productdescription": args.getProdDescription(),
-                      "productimage": args.getProdImages(),
-                      "productbuyer": widget.user.email,
-                      "users": [widget.user.email, args.getProdOwner()],
-                      "timestamp": FieldValue.serverTimestamp(),
-                    });
+              widget.user.email != args.getProdOwner()
+                  ? Container(
+                      width: 250,
+                      child: RaisedButton(
+                        color: Colors.orange,
+                        onPressed: () async {
+                          final doc = await FirebaseFirestore.instance
+                              .collection('chats')
+                              .add({
+                            "bookmarkowner": widget.user.email,
+                            "productname": args.getProdName(),
+                            "productprice": args.getProdPrice(),
+                            "productowner": args.getProdOwner(),
+                            "productdescription": args.getProdDescription(),
+                            "productimage": args.getProdImages(),
+                            "productbuyer": widget.user.email,
+                            "users": [widget.user.email, args.getProdOwner()],
+                            "timestamp": FieldValue.serverTimestamp(),
+                          });
 
-                    Navigator.popAndPushNamed(
-                      context, 
-                      'chatbox', 
-                      arguments: {
-                        'id': doc.id,
-                      },
-                    );
-                  },
-                  child: Text('Chat Seller'),
-                ),
-              )
-              :Container(),
+                          Navigator.popAndPushNamed(
+                            context,
+                            'chatbox',
+                            arguments: {
+                              'id': doc.id,
+                            },
+                          );
+                        },
+                        child: Text('Chat Seller'),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),

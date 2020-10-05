@@ -16,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-   void _onUserSignOut() {
+  void _onUserSignOut() {
     FirebaseAuth.instance.signOut();
     widget.onUserSignout();
   }
@@ -29,32 +29,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Color(0xff3c3a1e),
           elevation: 0,
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(8),
-              child: Card(
-                child: ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text(widget.user.email),
-                  trailing: IconButton(
-                    icon: Icon(Icons.logout),
-                    onPressed: _onUserSignOut,
+        body: Container(
+            color: Color(0xffe3deca),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(widget.user.email),
+                      trailing: IconButton(
+                        icon: Icon(Icons.logout),
+                        onPressed: _onUserSignOut,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Container(
-              width: 250,
-              child: RaisedButton(
-                child: Text('Add Product'),
-                color: Colors.brown,
-                onPressed: () {
-                  Navigator.pushNamed(context, 'createproduct');
-                },
-              ),
-            ),
-          ],
-        ));
+                Container(
+                  width: 250,
+                  child: RaisedButton(
+                    child: Text('Add Product'),
+                    color: Colors.brown,
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'createproduct');
+                    },
+                  ),
+                ),
+              ],
+            )));
   }
 }

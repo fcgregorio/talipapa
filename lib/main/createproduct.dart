@@ -42,7 +42,7 @@ class _CreateProduct extends State<CreateProduct> {
     String productname = _productnameController.text;
     String productprice = _productpriceController.text;
     String productdescription = _productdescriptionController.text;
-    String type ='1';
+    String type = '1';
     filePath = 'img/${DateTime.now()}.png';
     setState(() {
       _uploadTask = _storage.ref().child(filePath).putFile(_imageFile);

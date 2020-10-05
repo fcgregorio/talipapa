@@ -29,6 +29,7 @@ class _ChatBoxState extends State<ChatBox> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat'),
+        backgroundColor: Color(0xff3c3a1e),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: messagesRef.snapshots(),
@@ -41,56 +42,92 @@ class _ChatBoxState extends State<ChatBox> {
             return Spacer();
           }
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  reverse: true,
-                  children: snapshot.data.docs.map((DocumentSnapshot document) {
-                    return ListTile(
-                      title: Row(
-                        children: [
-                          Spacer(),
-                          Text(
-                            document.data()['text'],
-                            textAlign:
-                                document.data()['user'] == widget.user.email
-                                    ? TextAlign.right
-                                    : TextAlign.left,
-                          )
-                        ],
-                      ),
-                      // subtitle: Text(
-                      //   document.data()['timestamp'].toString(),
-                      // ),
-                    );
-                  }).toList(),
+          return Container(
+            color: Color(0xffe3deca),
+            padding: EdgeInsets.fromLTRB(10, 15, 10, 20),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    reverse: true,
+                    children:
+                        snapshot.data.docs.map((DocumentSnapshot document) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: document.data()['user'] == widget.user.email
+                              ? Color(0xffdda35d)
+                              : Color(0xffaa6231),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.brown, spreadRadius: 2),
+                          ],
+                        ),
+                        child: ListTile(
+                          title: Container(
+                            child: Text(
+                              document.data()['text'],
+                              textAlign:
+                                  document.data()['user'] == widget.user.email
+                                      ? TextAlign.right
+                                      : TextAlign.left,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 26,
+                              ),
+                            ),
+                          ),
+                          // subtitle: Text(
+                          //   document.data()['timestamp'].toString(),
+                          // ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                SizedBox(height: 15),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(color: Colors.brown, spreadRadius: 3),
+                    ],
+                  ),
+                  child: TextFormField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      labelText: "Enter Message",
+                    ),
+                  ),
                 ),
-              ),
-              MaterialButton(
-                onPressed: () async {
-                  if (_controller.text.trim().isNotEmpty) {
-                    await FirebaseFirestore.instance
-                        .collection('chats')
-                        .doc(widget.id)
-                        .collection('messages')
-                        .add({
-                      'text': _controller.text,
-                      'user': widget.user.email,
-                      'timestamp': FieldValue.serverTimestamp(),
-                    });
-                    _controller.clear();
-                  }
-                },
-                child: Text('Send'),
-              ),
-            ],
+                MaterialButton(
+                  onPressed: () async {
+                    if (_controller.text.trim().isNotEmpty) {
+                      await FirebaseFirestore.instance
+                          .collection('chats')
+                          .doc(widget.id)
+                          .collection('messages')
+                          .add({
+                        'text': _controller.text,
+                        'user': widget.user.email,
+                        'timestamp': FieldValue.serverTimestamp(),
+                      });
+                      _controller.clear();
+                    }
+                  },
+                  child: Text(
+                    'Send',
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff5c2c0c),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:talipapa/model/user.dart';
 
 class MessageScreen extends StatefulWidget {
   final User user;
@@ -21,7 +20,6 @@ class _MessageScreenState extends State<MessageScreen> {
         .collection('chats')
         .where('users', arrayContains: widget.user.email)
         .orderBy('timestamp', descending: true);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff3c3a1e),
@@ -49,14 +47,14 @@ class _MessageScreenState extends State<MessageScreen> {
             );
           }
 
-          return GridView.count(
-            crossAxisCount: 2,
-            children: snapshot.data.docs.map((DocumentSnapshot document) {
-              return Container(
-                color: Colors.transparent,
-                height: double.maxFinite,
-                child: Card(
-                  elevation: 1,
+          return Container(
+            color: Color(0xffe3deca),
+            padding: EdgeInsets.fromLTRB(10, 15, 10, 20),
+            child: GridView.count(
+              crossAxisCount: 2,
+              children: snapshot.data.docs.map((DocumentSnapshot document) {
+                return Card(
+                  elevation: 5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -79,7 +77,6 @@ class _MessageScreenState extends State<MessageScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 5),
                       Container(
                         padding: EdgeInsets.only(left: 5, right: 5),
                         child: Column(
@@ -87,15 +84,15 @@ class _MessageScreenState extends State<MessageScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(document.data()['productname']),
-                            Text('Price: ' + document.data()['productprice']),
+                            Text(document.data()['productowner']),
                           ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           );
         },
       ),
