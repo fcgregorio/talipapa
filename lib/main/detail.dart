@@ -46,21 +46,21 @@ class _DetailScreenState extends State<DetailScreen> {
     args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffeba857),
+        backgroundColor: Color(0xff3c3a1e),
         elevation: 0,
         title: Text('Product Details', textAlign: TextAlign.center),
       ),
-      body: Center(
-        child: Container(
-          width: 320,
-          child: Column(
+      body: Container(
+        color: Color(0xffe3deca),
+         padding: EdgeInsets.fromLTRB(10, 15, 10, 20),
+          child: ListView(
             children: [
               SizedBox(height: 10),
               Container(
                 child: Image.network(args.getProdImages()),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 width: 300,
-                height: 300,
+                height: 250,
                 decoration: BoxDecoration(
                   border: Border.all(width: .5),
                 ),
@@ -124,12 +124,12 @@ class _DetailScreenState extends State<DetailScreen> {
                           : Container()
                       : Container(),
                 ],
-              ),
+              ),         
               widget.user.email != args.getProdOwner()
                   ? Container(
                       width: 250,
                       child: RaisedButton(
-                        color: Colors.orange,
+                        color: Colors.brown,
                         onPressed: () async {
                           final doc = await FirebaseFirestore.instance
                               .collection('chats')
@@ -160,7 +160,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ],
           ),
         ),
-      ),
+      
     );
   }
 }
