@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import './background.dart';
-import './alert.dart';
 
 class SignInScreen extends StatefulWidget {
   final User user;
@@ -38,7 +37,7 @@ class _SignInState extends State<SignInScreen> {
             return IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.pop(context);
+                  Navigator.pushNamed(context, '/');
               },
             );
           },
@@ -188,7 +187,6 @@ class _SignInState extends State<SignInScreen> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   decoration: TextDecoration.underline,
-                                  // decorationColor: Colors.blueGrey,
                                 ),
                               ),
                             ],
@@ -216,6 +214,7 @@ class _SignInState extends State<SignInScreen> {
       });
 
       try {
+        // ignore: unused_local_variable
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
       } on FirebaseAuthException catch (e) {

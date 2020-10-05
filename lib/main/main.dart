@@ -84,14 +84,17 @@ class _MainScreenState extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.message),
               title: Text('Messages'),
+              backgroundColor: Colors.black,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bookmark),
               title: Text('Bookmarks'),
+              backgroundColor: Colors.black,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
               title: Text('Profile'),
+              backgroundColor: Colors.black,
             ),
           ],
           currentIndex: _selectedIndex,

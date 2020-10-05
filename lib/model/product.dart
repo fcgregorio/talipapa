@@ -1,22 +1,37 @@
 class Product {
-  final String _prodName, _prodDescription;
-  final double _prodPrice;
-  final List<String> _prodImages;
-  Product(
-      this._prodName, this._prodPrice, this._prodDescription, this._prodImages);
+  final String prodName, prodDescription, prodOwner,_type;
+  final String prodPrice;
+  final String prodImages;
+  var _id;
+  Product(this.prodOwner, this.prodName, this.prodPrice,
+      this.prodDescription, this.prodImages,this._type );
+  Product.withID(this._id, this.prodOwner, this.prodName, this.prodPrice,
+      this.prodDescription, this.prodImages,this._type);
+
+  dynamic getId() {
+    return this._id;
+  }
+
   String getProdName() {
-    return _prodName;
+    return prodName;
+  }
+
+  String getProdOwner() {
+    return prodOwner;
   }
 
   String getProdDescription() {
-    return _prodDescription;
+    return prodDescription;
   }
 
-  double getProdPrice() {
-    return _prodPrice;
+  String getProdPrice() {
+    return prodPrice;
   }
 
-  List<String> getProdImages() {
-    return _prodImages;
+  String getProdImages() {
+    return prodImages;
+  }
+  String getType() {
+    return _type;
   }
 }

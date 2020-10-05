@@ -1,17 +1,46 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import 'package:talipapa/model/product.dart';
 class DetailScreen extends StatefulWidget {
-  // final _index;
-  // Detail(this._index);
+  static const routeName = '/DetailScreen';
+  final User user;
+  DetailScreen({
+    Key key,
+    @required this.user,
+  }) : super(key: key);
   @override
   _DetailScreenState createState() => _DetailScreenState();
 }
-
 class _DetailScreenState extends State<DetailScreen> {
-  // final _index;
-  // _DetailState(this._index);
+ Product args;
+  void addBookmark(BuildContext context) async {
+    String productname = args.getProdName();
+    String productprice = args.getProdPrice();
+    String productowner = args.getProdOwner();
+    String productdescription = args.getProdDescription();
+    String productimage = args.getProdImages();
+    String type = '0';
+    await FirebaseFirestore.instance.runTransaction((transaction) =>
+        FirebaseFirestore.instance.collection("bookmarks").add({
+          "bookmarkowner": widget.user.email,
+          "productname": productname,
+          "productprice": productprice,
+          "productowner": productowner,
+          "productdescription":productdescription,
+          "productimage": productimage,
+          "type": type
+        }));
+    Navigator.pop(
+      context,
+    );
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text("Bookmark Added!!")));
+  }
   @override
   Widget build(BuildContext context) {
+     args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xffeba857),
@@ -21,17 +50,11 @@ class _DetailScreenState extends State<DetailScreen> {
       body: Center(
         child: Container(
           width: 320,
-          // decoration: BoxDecoration(
-          //   border: Border.all(width: .5),
-          // ),
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisSize: ,
             children: [
               SizedBox(height: 10),
               Container(
-                //image here
+                child: Image.network(args.getProdImages()),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 width: 300,
                 height: 300,
@@ -45,22 +68,24 @@ class _DetailScreenState extends State<DetailScreen> {
                   Padding(
                     padding: EdgeInsets.all(20),
                     child: Text(
-                      '[Product Name]',
+                      'Product: ' + args.getProdName(),
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Text('[Price]'),
+                    child: Text(
+                      'Price: Php ' + args.getProdPrice(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 10),
                 width: 280,
-                // decoration: BoxDecoration(border: Border.all(width: 2)),
                 child: Text(
-                  'DESCRIPTION',
+                  'DESCRIPTION: ',
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -69,8 +94,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 margin: EdgeInsets.symmetric(horizontal: 10),
                 width: 280,
                 height: 150,
-                // decoration: BoxDecoration(border: Border.all(width: 1)),
-                child: Text('blah blah blah'),
+                child: Text(args.getProdDescription()),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,19 +102,29 @@ class _DetailScreenState extends State<DetailScreen> {
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
-                      '[Author]',
+                      'Seller: ' + args.getProdOwner(),
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
+                 // ignore: unrelated_type_equality_checks
+                 widget.user.email != args.getProdOwner() ? 
+                args.getType() == '1' ? 
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        addBookmark(context);
+                      },
                       icon: Icon(Icons.bookmark),
                     ),
-                  ),
+                  )
+                  :Text(
+                    "HOTAOSDSADSADASD"
+                  ): Container(),
+                  
                 ],
               ),
+              widget.user.email != args.getProdOwner() ? 
               Container(
                 width: 250,
                 child: RaisedButton(
@@ -98,7 +132,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   onPressed: () {},
                   child: Text('Chat Seller'),
                 ),
-              ),
+              )
+              :Container(),
             ],
           ),
         ),

@@ -1,17 +1,22 @@
-class User {
-  final String _name;
-  final String _password;
-  final String _email;
-  User(this._name, this._email, this._password);
-  String getName() {
-    return _name;
+class Users {
+
+  final String currentuser, productowner;
+
+  var _id;
+  Users(this.currentuser, this.productowner);
+  Users.withID(this._id, this.currentuser, this.productowner);
+
+  dynamic getId() {
+    return this._id;
   }
 
-  String getEmail() {
-    return _email;
+  String getCurrentUser() {
+    return currentuser;
   }
 
-  String getPassword() {
-    return _password;
+  String getProdOwner() {
+    return productowner;
   }
+
+ 
 }

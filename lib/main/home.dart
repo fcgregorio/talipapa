@@ -1,100 +1,178 @@
-// import 'dart:html';
-
-import 'package:flutter/gestures.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:talipapa/main/detail.dart';
 import 'package:talipapa/model/product.dart';
-// import './home_compoments/appBar.dart';
 
 class HomeScreen extends StatefulWidget {
-  @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var listImg = [
-    'img/a.jpg',
-    'img/b.jpg',
-    'img/c.jpg',
-    'img/d.jpg',
-    'img/e.jpg',
-    'img/f.jpg',
-    'img/g.jpg',
-    'img/i.jpg',
-    'img/j.jpg',
-    'img/k.jpg',
-    'img/l.jpg',
-  ];
-  List<Product> sampleProducts = [];
-  // for(var p in listImg){
+  CollectionReference _productsData;
+  List<Product> _products;
+  var file;
+  bool isSearch = false;
+  void _loadProducts() async {
+    _productsData = FirebaseFirestore.instance.collection('products');
+    if (_productsData != null) {
+      _products = [];
+      QuerySnapshot data = await _productsData.get();
+      for (QueryDocumentSnapshot item in data.docs) {
+        Product currProduct = Product.withID(
+            item.reference,
+            item.get("productowner"),
+            item.get("productname"),
+            item.get("productprice"),
+            item.get("productdescription"),
+            item.get("productimage"),
+            item.get("type"));
 
-  // }
+        _products.add(currProduct);
+      }
+      print(_products);
+    }
+    setState(() {});
+  }
+
+  var resultSearch = [];
+  var tempSearch = [];
+
+  _search(String val) async {
+    if (val.length == 0) {
+      setState(() {
+        _loadProducts();
+      });
+    }
+    if (val.length > 0) {
+      var toCapVal = val.toLowerCase();
+
+      List<DocumentSnapshot> documentList;
+      documentList = (await FirebaseFirestore.instance
+              .collection("products")
+              .where("productname", isGreaterThanOrEqualTo: toCapVal)
+              .where("productname", isLessThan: toCapVal + 'z')
+              .get())
+          .docs;
+      _products.clear();
+      for (DocumentSnapshot item in documentList) {
+        Product currProduct = Product.withID(
+            item.reference,
+            item.get("productowner"),
+            item.get("productname"),
+            item.get("productprice"),
+            item.get("productdescription"),
+            item.get("productimage"),
+            item.get('type'));
+        _products.add(currProduct);
+      }
+      setState(() {
+        print(_products);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_products == null) {
+      _loadProducts();
+    }
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffeba857),
+        backgroundColor: Color(0xff3c3a1e),
         elevation: 0,
-        title: Text('Talipapa', textAlign: TextAlign.center),
+        title: !isSearch
+            ? Text('Talipapa', textAlign: TextAlign.center)
+            : TextField(
+                onChanged: (val) {
+                  _search(val);
+                },
+                style: TextStyle(color: Colors.white),
+
+                // onEditingComplete: _loadProducts,
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                  hintText: 'Search...',
+                ),
+              ),
+        actions: [
+          IconButton(
+              icon: !isSearch ? Icon(Icons.search) : Icon(Icons.cancel),
+              onPressed: () {
+                setState(() {
+                  isSearch = !isSearch;
+                  if (!isSearch) _loadProducts();
+                });
+              })
+        ],
       ),
       body: Container(
+        color: Color(0xffe3deca),
         padding: EdgeInsets.fromLTRB(10, 15, 10, 20),
         child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(hintText: ' Search...'),
-            ),
-            SizedBox(height: 25),
+          children: <Widget>[
+            SizedBox(height: 15),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                // crossAxisSpacing: 15,
-                // mainAxisSpacing: 15,
-
-                children: [
-                  ...listImg.map((item) {
-                    String img = item;
-                    return Container(
-                      height: double.maxFinite,
-                      child: Card(
-                        elevation: 5,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: double.maxFinite,
-                              height: MediaQuery.of(context).size.height / 5.3,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(img),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              child: FlatButton(
-                                child: Text(''),
-                                color: Colors.transparent,
-                                onPressed: () {
-                                  Navigator.pushNamed(context, 'detail');
-                                }, //---------------------------
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5, right: 5),
+              child: _products.length == 0
+                  ? Center(
+                      child: Container(
+                        // width: 50,
+                        child: Text("no products listed"),
+                      ),
+                    )
+                  : GridView.count(
+                      crossAxisCount: 2,
+                      children: [
+                        ..._products.map((item) {
+                          return Container(
+                            color: Colors.transparent,
+                            height: double.maxFinite,
+                            child: Card(
+                              elevation: 1,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Name'),
-                                  Text('Price: 1000'),
+                                  SizedBox(height: 5),
+                                  Container(
+                                    width: double.maxFinite,
+                                    height: 130,
+                                    child: FlatButton(
+                                      child: Image.network(item.getProdImages(),
+                                          fit: BoxFit.cover),
+                                      color: Colors.transparent,
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, DetailScreen.routeName,
+                                            arguments: Product(
+                                                item.getProdOwner(),
+                                                item.getProdName(),
+                                                item.getProdPrice(),
+                                                item.getProdDescription(),
+                                                item.getProdImages(),
+                                                item.getType()));
+                                      }, //---------------------------
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Container(
+                                    padding: EdgeInsets.only(left: 5, right: 5),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(item.getProdName()),
+                                        Text('Price: ' + item.getProdPrice()),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                ],
-              ),
+                          );
+                        }),
+                      ],
+                    ),
             ),
           ],
         ),
