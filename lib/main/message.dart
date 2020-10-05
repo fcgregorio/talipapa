@@ -15,76 +15,90 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  CollectionReference _usersData;
-  List<Users> _users;
-  void _loadMessages() async {
-    _usersData = FirebaseFirestore.instance.collection('users');
-    if (_usersData != null) {
-      _users = [];
-      QuerySnapshot data = await _usersData.get();
-      for (QueryDocumentSnapshot item in data.docs) {
-        Users currUsers = Users.withID(
-            item.reference, item.get("currentuser"), item.get("productowner"));
-        if (item.get("productowner") == widget.user.email) {
-          _users.add(currUsers);
-        }
-      }
-      print(_users);
-    }
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_users == null) {
-      _loadMessages();
-    }
+    final chatsRef = FirebaseFirestore.instance
+        .collection('chats')
+        .where('users', arrayContains: widget.user.email)
+        .orderBy('timestamp', descending: true);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff3c3a1e),
         title: Text('Messages'),
       ),
-      body: Container(
-        color: Color(0xffe3deca),
-        child: _users.length == 0
-            ? Center(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: chatsRef.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return null;
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Spacer();
+          }
+
+          if (snapshot.data.size == 0) {
+            return Container(
+              color: Color(0xffe3deca),
+              child: Center(
                 child: Container(
                   child: Text("no messages"),
                 ),
-              )
-            : ListView(
-                children: [
-                  ..._users.map((item) {
-                    return Container(
-                      color: Color(0xffe3deca),
-                      child: Column(
-                        children: <Widget>[
-                          FlatButton(
-                            child: Text(item.getCurrentUser()),
-
-                            onPressed: () {}, //---------------------------
-                          ),
-                        ],
-                      ),
-                    );
-                  })
-                ],
               ),
+            );
+          }
+
+          return GridView.count(
+            crossAxisCount: 2,
+            children: snapshot.data.docs.map((DocumentSnapshot document) {
+              return Container(
+                color: Colors.transparent,
+                height: double.maxFinite,
+                child: Card(
+                  elevation: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 5),
+                      Container(
+                        width: double.maxFinite,
+                        height: 130,
+                        child: FlatButton(
+                          child: Image.network(document.data()['productimage'],
+                              fit: BoxFit.cover),
+                          color: Colors.transparent,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              'chatbox',
+                              arguments: {
+                                'id': document.id,
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                        padding: EdgeInsets.only(left: 5, right: 5),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(document.data()['productname']),
+                            Text('Price: ' + document.data()['productprice']),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        },
       ),
     );
   }
-// void _loadReviewers() async {
-//     _usersData = FirebaseFirestore.instance.collection('reviews');
-//     if (_usersData != null) {
-//       reviews = [];
-//       QuerySnapshot data = await _usersData.get();
-//       for (QueryDocumentSnapshot item in data.docs) {
-//         Review currUser = Review.withID(item.reference, item.get("reviewer"),
-//             item.get("restaurant"), item.get("review"), item.get("rating"));
-//         reviews.add(currUser);
-//       }
-//     }
-//     setState(() {});
-//   }
-
 }

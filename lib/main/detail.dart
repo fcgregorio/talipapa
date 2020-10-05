@@ -129,7 +129,27 @@ class _DetailScreenState extends State<DetailScreen> {
                 width: 250,
                 child: RaisedButton(
                   color: Colors.orange,
-                  onPressed: () {},
+                  onPressed: () async {
+                    final doc = await FirebaseFirestore.instance.collection('chats').add({
+                      "bookmarkowner": widget.user.email,
+                      "productname": args.getProdName(),
+                      "productprice": args.getProdPrice(),
+                      "productowner": args.getProdOwner(),
+                      "productdescription": args.getProdDescription(),
+                      "productimage": args.getProdImages(),
+                      "productbuyer": widget.user.email,
+                      "users": [widget.user.email, args.getProdOwner()],
+                      "timestamp": FieldValue.serverTimestamp(),
+                    });
+
+                    Navigator.popAndPushNamed(
+                      context, 
+                      'chatbox', 
+                      arguments: {
+                        'id': doc.id,
+                      },
+                    );
+                  },
                   child: Text('Chat Seller'),
                 ),
               )

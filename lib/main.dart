@@ -85,9 +85,6 @@ class _AppState extends State<App> {
         'messages': (context) => MessageScreen(
               user: _user,
             ),
-        'chatbox': (context) => ChatBox(
-              user: _user,
-            ),
         'createproduct': (context) => CreateProduct(
               user: _user,
             ),
@@ -95,6 +92,20 @@ class _AppState extends State<App> {
           user: _user
         ), 
   
+      },
+      onGenerateRoute: (routeSettings) {
+        switch(routeSettings.name) {
+          case 'chatbox':
+            return MaterialPageRoute(builder: (buildContext) {
+              final arguments = routeSettings.arguments as Map;
+              return ChatBox(
+                user: _user,
+                id: arguments['id'],
+              );
+            });
+          default:
+            return null;
+        }
       },
     );
   }
